@@ -9,6 +9,11 @@ name_user_group NVARCHAR (50) NOT NULL UNIQUE
 )
 GO
 
+INSERT INTO user_group VALUES ('Заказчик')
+INSERT INTO user_group VALUES ('Сотрудник агенства')
+INSERT INTO user_group VALUES ('Администратор')
+GO
+
 CREATE TABLE users(
 id_users INT NOT NULL PRIMARY KEY IDENTITY (1,1),
 surname NVARCHAR (50) NOT NULL,
@@ -23,6 +28,13 @@ CREATE TABLE country(
 id_country INT NOT NULL PRIMARY KEY IDENTITY (1,1),
 name_country NVARCHAR (50) NOT NULL UNIQUE
 )
+GO
+
+INSERT INTO country VALUES ('Греция')
+INSERT INTO country VALUES ('Италия')
+INSERT INTO country VALUES ('Египет')
+INSERT INTO country VALUES ('Турция')
+INSERT INTO country VALUES ('Таиланд')
 GO
 
 CREATE TABLE type_tour(
