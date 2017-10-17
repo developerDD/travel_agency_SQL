@@ -62,10 +62,22 @@ name_type_room NVARCHAR (50) NOT NULL UNIQUE
 )
 GO
 
+INSERT INTO type_room VALUES ('Одноместный')
+INSERT INTO type_room VALUES ('Двухместный')
+INSERT INTO type_room VALUES ('Трехместный')
+INSERT INTO type_room VALUES ('Люкс')
+GO
+
 CREATE TABLE type_food(
 id_food INT NOT NULL PRIMARY KEY IDENTITY (1,1),
 name_type_food NVARCHAR (50) NOT NULL UNIQUE
 )
+GO
+
+INSERT INTO type_food VALUES ('Без питания')
+INSERT INTO type_food VALUES ('Завтрак')
+INSERT INTO type_food VALUES ('Завтрак и Ужин')
+INSERT INTO type_food VALUES ('Все включино')
 GO
 
 CREATE TABLE type_discount(
@@ -74,11 +86,24 @@ name_discount NVARCHAR (50) NOT NULL UNIQUE
 )
 GO
 
+INSERT INTO type_discount VALUES ('Процентная скидка')
+INSERT INTO type_discount VALUES ('2 тура по цене одного')
+INSERT INTO type_discount VALUES ('-200$ на тур в Египет')
+GO
+
+
 CREATE TABLE city(
 id_city INT NOT NULL PRIMARY KEY IDENTITY (1,1),
 name_city NVARCHAR (50) NOT NULL UNIQUE,
 contry_id INT NOT NULL FOREIGN KEY REFERENCES country(id_country) ON DELETE CASCADE
 )
+GO
+
+INSERT INTO city VALUES ('Афины', (SELECT id_country FROM country WHERE name_country='Греция'))
+INSERT INTO city VALUES ('Рим', (SELECT id_country FROM country WHERE name_country='Италия'))
+INSERT INTO city VALUES ('Хургада', (SELECT id_country FROM country WHERE name_country='Египет'))
+INSERT INTO city VALUES ('Анталия', (SELECT id_country FROM country WHERE name_country='Турция'))
+INSERT INTO city VALUES ('Бангкок', (SELECT id_country FROM country WHERE name_country='Таиланд'))
 GO
 
 CREATE TABLE voyage_fly(
