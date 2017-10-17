@@ -24,6 +24,13 @@ user_group_id INT NOT NULL FOREIGN KEY REFERENCES user_group(id_user_group) ON D
 )
 GO
 
+INSERT INTO users VALUES ('Журкин','Валерий','Петрович','dd@ff',(SELECT id_user_group FROM user_group WHERE name_user_group='Заказчик'))
+INSERT INTO users VALUES ('Куркин','Сергей','Петрович','ddd@fff',(SELECT id_user_group FROM user_group WHERE name_user_group='Заказчик'))
+INSERT INTO users VALUES ('Вуркин','Дмитрий','Олегович','dddd@ffff',(SELECT id_user_group FROM user_group WHERE name_user_group='Заказчик'))
+INSERT INTO users VALUES ('Лукошко','Светлана','Сергеевна','lll@ffff',(SELECT id_user_group FROM user_group WHERE name_user_group='Сотрудник агенства'))
+INSERT INTO users VALUES ('Кукушка','Алена','Василивна','kkk@ffff',(SELECT id_user_group FROM user_group WHERE name_user_group='Администратор'))
+GO
+
 CREATE TABLE country(
 id_country INT NOT NULL PRIMARY KEY IDENTITY (1,1),
 name_country NVARCHAR (50) NOT NULL UNIQUE
@@ -41,6 +48,12 @@ CREATE TABLE type_tour(
 id_type_tour INT NOT NULL PRIMARY KEY IDENTITY (1,1),
 name_type_tour NVARCHAR (50) NOT NULL UNIQUE
 )
+GO
+
+INSERT INTO type_tour VALUES ('Туризм')
+INSERT INTO type_tour VALUES ('Пляжный отдых')
+INSERT INTO type_tour VALUES ('Бизнес')
+INSERT INTO type_tour VALUES ('Спортивный')
 GO
 
 CREATE TABLE type_room(
