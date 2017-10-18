@@ -42,7 +42,10 @@ INSERT INTO country VALUES ('Италия')
 INSERT INTO country VALUES ('Египет')
 INSERT INTO country VALUES ('Турция')
 INSERT INTO country VALUES ('Таиланд')
+INSERT INTO country VALUES ('Украина')
 GO
+
+
 
 CREATE TABLE type_tour(
 id_type_tour INT NOT NULL PRIMARY KEY IDENTITY (1,1),
@@ -82,13 +85,14 @@ GO
 
 CREATE TABLE type_discount(
 id_discount INT NOT NULL PRIMARY KEY IDENTITY (1,1),
-name_discount NVARCHAR (50) NOT NULL UNIQUE
+name_discount NVARCHAR (50) NOT NULL UNIQUE,
+value INT DEFAULT 0
 )
 GO
 
 INSERT INTO type_discount VALUES ('Процентная скидка')
-INSERT INTO type_discount VALUES ('2 тура по цене одного')
-INSERT INTO type_discount VALUES ('-200$ на тур в Египет')
+INSERT INTO type_discount VALUES ('2 тура по цене одного',2)
+INSERT INTO type_discount VALUES ('-200$ на тур в Египет',200)
 GO
 
 
@@ -104,15 +108,25 @@ INSERT INTO city VALUES ('Рим', (SELECT id_country FROM country WHERE name_count
 INSERT INTO city VALUES ('Хургада', (SELECT id_country FROM country WHERE name_country='Египет'))
 INSERT INTO city VALUES ('Анталия', (SELECT id_country FROM country WHERE name_country='Турция'))
 INSERT INTO city VALUES ('Бангкок', (SELECT id_country FROM country WHERE name_country='Таиланд'))
+INSERT INTO city VALUES ('Днепр', (SELECT id_country FROM country WHERE name_country='Украина'))
 GO
 
 CREATE TABLE voyage_fly(
 id_voyage_fly INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+city_departure_id INT NOT NULL FOREIGN KEY REFERENCES city(id_city) ON DELETE CASCADE,
 departure_there INT NOT NULL,
+city_arrival_id INT NOT NULL FOREIGN KEY REFERENCES city(id_city) ON DELETE CASCADE,
 arrival_from INT NOT NULL,
-price_fly INT NOT NULL,
-city_id INT NOT NULL FOREIGN KEY REFERENCES city(id_city) ON DELETE CASCADE
+price_fly INT NOT NULL
 )
+GO
+
+INSERT INTO voyage_fly VALUES ((SELECT id_city FROM city WHERE name_city='Днепр'),01012017,(SELECT id_city FROM city WHERE name_city='Афины'),01012017,150)
+INSERT INTO voyage_fly VALUES ((SELECT id_city FROM city WHERE name_city='Афины'),08012017,(SELECT id_city FROM city WHERE name_city='Днепр'),08012017,150)
+INSERT INTO voyage_fly VALUES ((SELECT id_city FROM city WHERE name_city='Днепр'),08012017,(SELECT id_city FROM city WHERE name_city='Рим'),08012017,150)
+INSERT INTO voyage_fly VALUES ((SELECT id_city FROM city WHERE name_city='Рим'),18012017,(SELECT id_city FROM city WHERE name_city='Днепр'),18012017,150)
+INSERT INTO voyage_fly VALUES ((SELECT id_city FROM city WHERE name_city='Днепр'),20012017,(SELECT id_city FROM city WHERE name_city='Хургада'),20012017,200)
+INSERT INTO voyage_fly VALUES ((SELECT id_city FROM city WHERE name_city='Хургада'),30012017,(SELECT id_city FROM city WHERE name_city='Днепр'),30012017,200)
 GO
 
 CREATE TABLE hotel(
@@ -124,17 +138,29 @@ type_room_id INT NOT NULL FOREIGN KEY REFERENCES type_room(id_room)ON DELETE CAS
 )
 GO
 
+INSERT INTO hotel VALUES ('Hotel Limo',300,(SELECT id_city FROM city WHERE name_city='Афины'),(SELECT id_room FROM type_room WHERE name_type_room='Двухместный'))
+INSERT INTO hotel VALUES ('Hotel Vladio',500,(SELECT id_city FROM city WHERE name_city='Рим'),(SELECT id_room FROM type_room WHERE name_type_room='Двухместный'))
+INSERT INTO hotel VALUES ('Hotel Sharm',500,(SELECT id_city FROM city WHERE name_city='Хургада'),(SELECT id_room FROM type_room WHERE name_type_room='Двухместный'))
+GO
+
 CREATE TABLE tour(
 id_tour INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+name_tour NVARCHAR (50) NOT NULL UNIQUE,
 city_id INT NOT NULL FOREIGN KEY REFERENCES city(id_city) ON DELETE CASCADE,
 hotel_id INT NOT NULL FOREIGN KEY REFERENCES hotel(id_hotel),
 type_tour_id INT NOT NULL FOREIGN KEY REFERENCES type_tour(id_type_tour) ON DELETE CASCADE,
 type_food_id INT NOT NULL FOREIGN KEY REFERENCES type_food(id_food),
-voyage_fly_id INT NOT NULL FOREIGN KEY REFERENCES voyage_fly(id_voyage_fly),
+departure_id INT NOT NULL FOREIGN KEY REFERENCES voyage_fly(id_voyage_fly),
+arrival_id INT NOT NULL FOREIGN KEY REFERENCES voyage_fly(id_voyage_fly),
 discount_id INT NOT NULL FOREIGN KEY REFERENCES type_discount(id_discount) ON DELETE CASCADE,
 quantity_tour INT NOT NULL,
 price_tour INT NOT NULL,
 )
+GO
+
+INSERT INTO tour VALUES ('Прекрасные Афины',(SELECT id_city FROM city WHERE name_city='Афины'),(SELECT id_hotel FROM hotel WHERE name_hotel='Hotel Limo'),
+(SELECT id_type_tour FROM type_tour WHERE name_type_tour='Туризм'),(SELECT id_food FROM type_food WHERE name_type_food='Все включино'),
+1,2,1,1,((SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=1)+(SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=2)+(SELECT price_hotel  FROM hotel WHERE id_hotel=1)))
 GO
 
 CREATE TABLE reserv(
