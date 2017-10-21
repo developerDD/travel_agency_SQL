@@ -90,7 +90,7 @@ value INT DEFAULT 0
 )
 GO
 
-INSERT INTO type_discount VALUES ('Процентная скидка')
+INSERT INTO type_discount VALUES ('Процентная скидка',0)
 INSERT INTO type_discount VALUES ('2 тура по цене одного',2)
 INSERT INTO type_discount VALUES ('-200$ на тур в Египет',200)
 GO
@@ -113,9 +113,9 @@ GO
 
 CREATE TABLE voyage_fly(
 id_voyage_fly INT NOT NULL PRIMARY KEY IDENTITY (1,1),
-city_departure_id INT NOT NULL FOREIGN KEY REFERENCES city(id_city) ON DELETE CASCADE,
+city_departure_id INT NOT NULL FOREIGN KEY REFERENCES city(id_city),
 departure_there INT NOT NULL,
-city_arrival_id INT NOT NULL FOREIGN KEY REFERENCES city(id_city) ON DELETE CASCADE,
+city_arrival_id INT NOT NULL FOREIGN KEY REFERENCES city(id_city),
 arrival_from INT NOT NULL,
 price_fly INT NOT NULL
 )
@@ -160,8 +160,17 @@ GO
 
 INSERT INTO tour VALUES ('Прекрасные Афины',(SELECT id_city FROM city WHERE name_city='Афины'),(SELECT id_hotel FROM hotel WHERE name_hotel='Hotel Limo'),
 (SELECT id_type_tour FROM type_tour WHERE name_type_tour='Туризм'),(SELECT id_food FROM type_food WHERE name_type_food='Все включино'),
-1,2,1,1,((SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=1)+(SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=2)+(SELECT price_hotel  FROM hotel WHERE id_hotel=1)))
+1,2,1,10,((SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=1)+(SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=2)+(SELECT price_hotel  FROM hotel WHERE id_hotel=1))),
+('Прекрасный Рим',(SELECT id_city FROM city WHERE name_city='Рим'),(SELECT id_hotel FROM hotel WHERE name_hotel='Hotel Vladio'),
+(SELECT id_type_tour FROM type_tour WHERE name_type_tour='Бизнес'),(SELECT id_food FROM type_food WHERE name_type_food='Все включино'),
+3,4,1,10,((SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=3)+(SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=4)+(SELECT price_hotel  FROM hotel WHERE id_hotel=2))),
+('Красное море',(SELECT id_city FROM city WHERE name_city='Хургада'),(SELECT id_hotel FROM hotel WHERE name_hotel='Hotel Sharm'),
+(SELECT id_type_tour FROM type_tour WHERE name_type_tour='Пляжный отдых'),(SELECT id_food FROM type_food WHERE name_type_food='Все включино'),
+5,6,1,10,((SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=5)+(SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=6)+(SELECT price_hotel  FROM hotel WHERE id_hotel=3)))
 GO
+
+SELECT name_tour, name_city,price_tour,name_hotel FROM tour, city,hotel WHERE tour.city_id=city.id_city and tour.hotel_id=hotel.id_hotel ORDER BY name_tour
+
 
 CREATE TABLE reserv(
 users_id INT NOT NULL FOREIGN KEY REFERENCES users(id_users) ON DELETE CASCADE,
