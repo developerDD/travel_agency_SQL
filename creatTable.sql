@@ -197,6 +197,8 @@ date_sala INT NOT NULL
 GO
 
 INSERT INTO sala VALUES (1,3,2,19012017)
+UPDATE tour  SET quantity_tour=quantity_tour-(SELECT quantity_reserv FROM reserv WHERE reserv.tour_id=tour.id_tour) WHERE  tour.id_tour=2
 GO
+
 
 
