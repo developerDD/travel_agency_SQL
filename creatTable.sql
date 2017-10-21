@@ -169,7 +169,7 @@ INSERT INTO tour VALUES ('Прекрасные Афины',(SELECT id_city FROM city WHERE name
 5,6,1,10,((SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=5)+(SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=6)+(SELECT price_hotel  FROM hotel WHERE id_hotel=3)))
 GO
 
-SELECT name_tour, name_city,price_tour,name_hotel FROM tour, city,hotel WHERE tour.city_id=city.id_city and tour.hotel_id=hotel.id_hotel ORDER BY name_tour
+--DELETE FROM voyage_fly WHERE id_voyage_fly>6 удаление строк из таблици
 
 
 CREATE TABLE reserv(
@@ -179,6 +179,14 @@ quantity_reserv INT NOT NULL,
 )
 GO
 
+INSERT INTO reserv VALUES (1,1,2),(2,2,1)
+UPDATE tour  SET quantity_tour=quantity_tour-(SELECT quantity_reserv FROM reserv WHERE reserv.tour_id=tour.id_tour) WHERE  tour.id_tour=1
+UPDATE tour  SET quantity_tour=quantity_tour-(SELECT quantity_reserv FROM reserv WHERE reserv.tour_id=tour.id_tour) WHERE  tour.id_tour=2
+GO
+
+
+
+
 CREATE TABLE sala(
 id_sala INT NOT NULL PRIMARY KEY IDENTITY (1,1),
 users_id INT NOT NULL FOREIGN KEY REFERENCES users(id_users) ON DELETE CASCADE,
@@ -187,3 +195,8 @@ quantity_tour_sala INT NOT NULL,
 date_sala INT NOT NULL
 )
 GO
+
+INSERT INTO sala VALUES (1,3,2,19012017)
+GO
+
+
