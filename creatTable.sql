@@ -89,10 +89,10 @@ name_discount NVARCHAR (50) NOT NULL UNIQUE,
 value INT DEFAULT 0
 )
 GO
-
-INSERT INTO type_discount VALUES ('Процентная скидка',0)
+INSERT INTO type_discount VALUES ('Процентная скидка 0%',0)
 INSERT INTO type_discount VALUES ('2 тура по цене одного',2)
 INSERT INTO type_discount VALUES ('-200$ на тур в Египет',200)
+INSERT INTO type_discount VALUES ('Процентная скидка 10%',10)
 GO
 
 
@@ -200,5 +200,11 @@ INSERT INTO sala VALUES (1,3,2,19012017)
 UPDATE tour  SET quantity_tour=quantity_tour-(SELECT quantity_reserv FROM reserv WHERE reserv.tour_id=tour.id_tour) WHERE  tour.id_tour=2
 GO
 
+--select name_discount AS [Вид пердложения],value, name_tour AS [Назавание тура],price_tour AS [Цена тура],name_hotel AS [Название гостиници], name_city AS [Город],name_country
+-- from tour
+--join type_discount  on tour.discount_id=type_discount.id_discount 
+--join hotel on tour.hotel_id=hotel.id_hotel 
+--join city on tour.city_id=city.id_city
+--join country on city.contry_id=id_country
 
 
