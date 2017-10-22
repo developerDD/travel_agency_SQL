@@ -179,8 +179,9 @@ INSERT INTO tour VALUES ('Красное море акция! 2 тура по цене одного',(SELECT id_
 5,6,2,6,(((SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=5)+(SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=6)+(SELECT price_hotel  FROM hotel WHERE id_hotel=3))/(SELECT value FROM type_discount WHERE type_discount.id_discount=2)))
 GO
 
-
---DELETE FROM voyage_fly WHERE id_voyage_fly>6 удаление строк из таблици
+/*
+DELETE FROM tour удаление строк
+*/ 
 
 
 CREATE TABLE reserv(
@@ -189,14 +190,6 @@ tour_id INT NOT NULL FOREIGN KEY REFERENCES tour(id_tour) ON DELETE CASCADE,
 quantity_reserv INT NOT NULL,
 )
 GO
-
-INSERT INTO reserv VALUES (1,1,2),(2,2,1)
-UPDATE tour  SET quantity_tour=quantity_tour-(SELECT quantity_reserv FROM reserv WHERE reserv.tour_id=tour.id_tour) WHERE  tour.id_tour=1
-UPDATE tour  SET quantity_tour=quantity_tour-(SELECT quantity_reserv FROM reserv WHERE reserv.tour_id=tour.id_tour) WHERE  tour.id_tour=2
-GO
-
-
-
 
 CREATE TABLE sala(
 id_sala INT NOT NULL PRIMARY KEY IDENTITY (1,1),
@@ -223,3 +216,52 @@ WHERE tour.discount_id>1
 GO
 
 SELECT * FROM promotional_offers
+GO
+
+CREATE PROCEDURE discounts1 (@country nvarchar(30))
+AS
+DECLARE @idtour int
+SET @idtour=(SELECT id_tour FROM tour
+join city on tour.city_id=city.id_city
+join country on city.contry_id=id_country
+WHERE tour.discount_id=1 AND
+name_country=@country)
+UPDATE tour SET discount_id=(SELECT id_discount FROM type_discount WHERE name_discount='2 тура по цене одного'),
+price_tour=price_tour/2
+WHERE id_tour=@idtour
+GO
+
+EXEC discounts1 'Греция'
+GO
+
+CREATE PROCEDURE discountsEgypt
+AS
+DECLARE @idtour int
+SET @idtour=(SELECT id_tour FROM tour
+join city on tour.city_id=city.id_city
+join country on city.contry_id=id_country
+WHERE tour.discount_id=1 AND
+name_country='Египет')
+UPDATE tour SET discount_id=(SELECT id_discount FROM type_discount WHERE name_discount='-200$ на тур в Египет'),
+price_tour=price_tour-200
+WHERE id_tour=@idtour
+GO
+
+EXEC discountsEgypt
+GO
+
+CREATE PROCEDURE [discounts10%] (@country nvarchar(30))
+AS
+DECLARE @idtour int
+SET @idtour=(SELECT id_tour FROM tour
+join city on tour.city_id=city.id_city
+join country on city.contry_id=id_country
+WHERE tour.discount_id=1 AND
+name_country=@country)
+UPDATE tour SET discount_id=(SELECT id_discount FROM type_discount WHERE name_discount='Процентная скидка 10%'),
+price_tour=price_tour*0.9
+WHERE id_tour=@idtour
+GO
+
+EXEC [discounts10%]'Италия'
+GO
