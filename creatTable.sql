@@ -204,6 +204,10 @@ INSERT INTO sala VALUES (1,3,2,19012017)
 UPDATE tour  SET quantity_tour=quantity_tour-(SELECT quantity_reserv FROM reserv WHERE reserv.tour_id=tour.id_tour) WHERE  tour.id_tour=2
 GO
 
+/*Реализоватьпредставление «Акционныепредложения»в
+которое должны выводится путевки со скидками,
+представлениедолжносодержатьполе «видпредложения»*/
+
 CREATE VIEW promotional_offers
 AS
 select name_discount AS [Вид пердложения], name_tour AS [Назавание тура],price_tour AS [Цена тура],name_hotel AS [Название гостиници], name_city AS [Город],name_country AS [Страна]
@@ -217,6 +221,10 @@ GO
 
 SELECT * FROM promotional_offers
 GO
+
+/*Реализовать процедуру, позволяющую добавлять
+акционные предложения на путевки в указанную страну (3
+процедуры,пооднойдлякаждоговидаскидок).*/
 
 CREATE PROCEDURE discounts1 (@country nvarchar(30))
 AS
@@ -264,4 +272,26 @@ WHERE id_tour=@idtour
 GO
 
 EXEC [discounts10%]'Италия'
+GO
+
+--Реализовать функцию, позволяющую забронировать
+--путевку,принимающую id тура и логин пользователя.
+
+CREATE FUNCTION FancReserv (@idTour int, @emailUser nvarchar(30))
+RETURNS  TABLE 
+AS
+RETURN(
+SELECT u.id_users, t.id_tour, quantity_tour=1 FROM tour t 
+JOIN users u ON  u.email=@emailUser
+WHERE t.id_tour=@idTour
+)
+GO
+-- с для удобства работы с функией создал процедуру
+CREATE PROCEDURE ReserVtour (@idTour int, @emailUser nvarchar(30))
+AS
+INSERT INTO reserv VALUES((SELECT id_users FROM FancReserv (@idTour, @emailUser)),(SELECT id_tour FROM FancReserv (@idTour, @emailUser)),
+(SELECT quantity_tour FROM FancReserv (@idTour, @emailUser)))
+GO
+
+EXEC ReserVtour 10, ddd@fff
 GO
