@@ -334,6 +334,9 @@ UPDATE tour SET quantity_tour=quantity_tour-(SELECT inserted.quantity_tour_sala 
 END
 GO
 
+/*
+Запретить удаление путевок в страны: «Египет» и «Турция»
+*/
 CREATE TRIGGER MyTriggerReserv
 ON reserv
 AFTER INSERT, DELETE
@@ -349,5 +352,26 @@ UPDATE tour SET quantity_tour=quantity_tour+(SELECT deleted.quantity_reserv FROM
 END
 GO
 --DROP TRIGGER MyTrigger
+
+CREATE TRIGGER NoDeletTour
+ON tour
+FOR DELETE
+AS
+IF(SELECT COUNT(*) FROM deleted 
+JOIN city ON deleted.city_id=city.id_city
+JOIN country ON country.id_country=city.contry_id WHERE city.contry_id=(SELECT id_country FROM country WHERE name_country='Турция') )>0
+
+BEGIN
+print'Нельзя удальть!'
+ ROLLBACK TRANSACTION
+END
+ELSE IF(SELECT COUNT(*) FROM deleted 
+JOIN city ON deleted.city_id=city.id_city
+JOIN country ON country.id_country=city.contry_id WHERE city.contry_id=(SELECT id_country FROM country WHERE name_country='Египет') )>0
+
+BEGIN
+print'Нельзя удальть!'
+ ROLLBACK TRANSACTION
+END
 
 
