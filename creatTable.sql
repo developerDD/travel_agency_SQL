@@ -295,3 +295,20 @@ GO
 
 EXEC ReserVtour 10, ddd@fff
 GO
+
+/*–еализовать функцию дл€ выбора туров в страны, где
+средн€€ стоимость тура не превышает переданное значение.*/
+
+CREATE FUNCTION TourAVGPrice (@price int)
+RETURNS  TABLE 
+AS
+RETURN(
+SELECT name_country AS Country,AVG (price_tour) AS AVGPrice FROM tour
+JOIN city ON tour.city_id=city.id_city
+JOIN country ON country.id_country=city.id_city
+GROUP BY name_country
+HAVING AVG (price_tour)>@price
+)
+GO
+
+SELECT * FROM TourAVGPrice(200)
