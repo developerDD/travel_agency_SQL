@@ -200,9 +200,6 @@ date_sala INT NOT NULL
 )
 GO
 
-INSERT INTO sala VALUES (1,3,2,19012017)
-UPDATE tour  SET quantity_tour=quantity_tour-(SELECT quantity_reserv FROM reserv WHERE reserv.tour_id=tour.id_tour) WHERE  tour.id_tour=2
-GO
 
 /*–еализоватьпредставление Ђјкционныепредложени€їв
 которое должны выводитс€ путевки со скидками,
@@ -312,3 +309,45 @@ HAVING AVG (price_tour)>@price
 GO
 
 SELECT * FROM TourAVGPrice(200)
+
+/*
+–еализовать представление - отчет о заказанных турах
+за мес€ц, которое должно содержать:название тура, стоимость тура, стоимость одной путевки (без скидок),
+средн€€ стоимость путевки (с учетом скидок) , количество проданных путевок и итоговый доход
+*/
+
+
+
+/*
+–еализовать автоматическое изменение количества акционных предложений (оставшеес€ число ) при совершении
+заказа, бронировании, разбронировании акционной путевки
+*/
+
+CREATE TRIGGER MyTrigger
+ON sala
+AFTER INSERT
+AS
+BEGIN
+DECLARE @insertIDtour int
+SET @insertIDtour = (SELECT inserted.tour_id FROM inserted WHERE inserted.tour_id=tour_id)
+UPDATE tour SET quantity_tour=quantity_tour-(SELECT inserted.quantity_tour_sala FROM inserted WHERE inserted.tour_id=tour_id ) WHERE tour.id_tour=@insertIDtour
+END
+GO
+
+CREATE TRIGGER MyTriggerReserv
+ON reserv
+AFTER INSERT, DELETE
+AS
+BEGIN
+DECLARE @insertIDtour int,@deletIDtour int
+SET @insertIDtour = (SELECT inserted.tour_id FROM inserted WHERE inserted.tour_id=tour_id)
+UPDATE tour SET quantity_tour=quantity_tour-(SELECT inserted.quantity_reserv FROM inserted WHERE inserted.tour_id=tour_id ) WHERE tour.id_tour=@insertIDtour
+
+SET @deletIDtour = (SELECT deleted.tour_id FROM deleted WHERE deleted.tour_id=tour_id)
+UPDATE tour SET quantity_tour=quantity_tour+(SELECT deleted.quantity_reserv FROM deleted WHERE deleted.tour_id=tour_id ) WHERE tour.id_tour=@deletIDtour
+
+END
+GO
+--DROP TRIGGER MyTrigger
+
+
