@@ -158,13 +158,13 @@ price_tour INT NOT NULL,
 )
 GO
 
-INSERT INTO tour VALUES ('Прекрасные Афины',(SELECT id_city FROM city WHERE name_city='Афины'),(SELECT id_hotel FROM hotel WHERE name_hotel='Hotel Limo'),
+INSERT INTO tour VALUES ('Прекрасные Афины2',(SELECT id_city FROM city WHERE name_city='Афины'),(SELECT id_hotel FROM hotel WHERE name_hotel='Hotel Limo'),
 (SELECT id_type_tour FROM type_tour WHERE name_type_tour='Туризм'),(SELECT id_food FROM type_food WHERE name_type_food='Все включино'),
 1,2,1,10,((SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=1)+(SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=2)+(SELECT price_hotel  FROM hotel WHERE id_hotel=1))),
-('Прекрасный Рим',(SELECT id_city FROM city WHERE name_city='Рим'),(SELECT id_hotel FROM hotel WHERE name_hotel='Hotel Vladio'),
+('Прекрасный Рим2',(SELECT id_city FROM city WHERE name_city='Рим'),(SELECT id_hotel FROM hotel WHERE name_hotel='Hotel Vladio'),
 (SELECT id_type_tour FROM type_tour WHERE name_type_tour='Бизнес'),(SELECT id_food FROM type_food WHERE name_type_food='Все включино'),
 3,4,1,10,((SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=3)+(SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=4)+(SELECT price_hotel  FROM hotel WHERE id_hotel=2))),
-('Красное море',(SELECT id_city FROM city WHERE name_city='Хургада'),(SELECT id_hotel FROM hotel WHERE name_hotel='Hotel Sharm'),
+('Красное море2',(SELECT id_city FROM city WHERE name_city='Хургада'),(SELECT id_hotel FROM hotel WHERE name_hotel='Hotel Sharm'),
 (SELECT id_type_tour FROM type_tour WHERE name_type_tour='Пляжный отдых'),(SELECT id_food FROM type_food WHERE name_type_food='Все включино'),
 5,6,1,10,((SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=5)+(SELECT price_fly FROM voyage_fly WHERE id_voyage_fly=6)+(SELECT price_hotel  FROM hotel WHERE id_hotel=3)))
 GO
@@ -198,6 +198,9 @@ tour_id INT NOT NULL FOREIGN KEY REFERENCES tour(id_tour) ON DELETE CASCADE,
 quantity_tour_sala INT NOT NULL,
 date_sala INT NOT NULL
 )
+GO
+
+INSERT INTO sala VALUES (3,17,2,02012017)
 GO
 
 
@@ -334,9 +337,7 @@ UPDATE tour SET quantity_tour=quantity_tour-(SELECT inserted.quantity_tour_sala 
 END
 GO
 
-/*
-Запретить удаление путевок в страны: «Египет» и «Турция»
-*/
+
 CREATE TRIGGER MyTriggerReserv
 ON reserv
 AFTER INSERT, DELETE
@@ -352,7 +353,9 @@ UPDATE tour SET quantity_tour=quantity_tour+(SELECT deleted.quantity_reserv FROM
 END
 GO
 --DROP TRIGGER MyTrigger
-
+/*
+Запретить удаление путевок в страны: «Египет» и «Турция»
+*/
 CREATE TRIGGER NoDeletTour
 ON tour
 FOR DELETE
